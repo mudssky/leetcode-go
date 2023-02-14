@@ -7,14 +7,23 @@ func search(nums []int, target int) int {
 	high := len(nums) - 1
 	// 已经排除了空数组的情况，此时high=-1，进入不了循环
 	for low <= high {
-		mid := low + (high-low)>>1
-		if target > nums[mid] {
-			low = mid + 1
-		} else if target < nums[mid] {
-			high = mid - 1
-		} else {
+		mid := low + ((high - low) >> 1)
+		if nums[mid] == target {
 			return mid
+		} else if nums[mid] < target {
+			low = mid + 1
+		} else {
+			high = mid - 1
 		}
+		// 当 low 和 high 接近时，切换到线性查找,避免二分查找的额外开销
+		// if high-low <= 16 {
+		// 	for i := low; i <= high; i++ {
+		// 		if nums[i] == target {
+		// 			return i
+		// 		}
+		// 	}
+		// 	return -1
+		// }
 	}
 	return -1
 	// return util.BinarySearch(nums, target)

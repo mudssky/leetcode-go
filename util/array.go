@@ -14,3 +14,10 @@ func RemoveInPlace[T comparable](arr []T, target T) int {
 	}
 	return res
 }
+
+// 返回一个copy好的数组
+func Copy[T comparable](arr []T) []T {
+	newArr := make([]T, len(arr))
+	copy(newArr, arr)
+	return newArr
+}

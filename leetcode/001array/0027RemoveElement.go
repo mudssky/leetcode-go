@@ -4,6 +4,7 @@ package leetcode
 // 不要使用额外的数组空间，你必须仅使用 O(1) 额外空间并原地修改输入数组。
 // 元素的顺序可以改变。你不需要考虑数组中超出新长度后面的元素。
 // 这道题用到了双指针法
+// 时间复杂度是O(n) 空间复杂度O(1),没有使用额外空间
 func removeElement(nums []int, val int) int {
 	length := len(nums)
 	slow := 0

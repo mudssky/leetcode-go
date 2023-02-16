@@ -2,6 +2,7 @@ package leetcode
 
 // 给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target  ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。
 // 704
+// 时间复杂度是O(logn) 空间复杂度O(1),几乎没有使用额外空间
 func search(nums []int, target int) int {
 	low := 0
 	high := len(nums) - 1

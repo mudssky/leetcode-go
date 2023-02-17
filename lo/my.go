@@ -85,3 +85,46 @@ func DifferenceWith[T comparable, R comparable](collection []T, excludes []R, co
 
 	return result
 }
+
+// This method is like _.find except that it returns the index of the first element predicate returns truthy for instead of the element itself.
+// 和find一样,但是返回的是数组下标
+func FindIndex[T comparable](collection []T, predicate func(item T) bool) int {
+	for i, item := range collection {
+		if predicate(item) {
+			return i
+		}
+	}
+	return -1
+}
+
+// 类似于FindIndex,但是从后往前找
+func FindLastIndex[T comparable](collection []T, predicate func(item T) bool) int {
+	length := len(collection)
+	for i := length - 1; i >= 0; i-- {
+		if predicate(collection[i]) {
+			return i
+		}
+	}
+	return -1
+}
+
+// 求任意多个数组的交集数组,注意传入的数组都需要经过去重
+func Intersect2[T comparable](arrays ...[]T) []T {
+	// 创建一个 map，用于统计元素在几个数组中出现过
+	m := make(map[T]int)
+	for _, a := range arrays {
+		for _, v := range a {
+			m[v]++
+		}
+	}
+
+	res := []T{}
+	// 遍历 map，找出出现在所有数组中的元素
+	for k, v := range m {
+		if v == len(arrays) {
+			res = append(res, k)
+		}
+	}
+
+	return res
+}

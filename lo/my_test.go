@@ -1,7 +1,9 @@
 package lo
 
 import (
+	"math"
 	"reflect"
+	"strconv"
 	"testing"
 )
 
@@ -22,6 +24,129 @@ func TestConcat(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Concat(tt.args.collection, tt.args.values...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Concat() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestDifferenceBy(t *testing.T) {
+	type args struct {
+		collection []float64
+		excludes   []float64
+		// iteratee   func(item int) string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []float64
+	}{
+		{"test1", args{[]float64{3.1, 2.2, 1.3}, []float64{4.4, 2.5}}, []float64{3.1, 1.3}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := DifferenceBy(tt.args.collection, tt.args.excludes, math.Floor); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("DifferenceBy() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestDifference(t *testing.T) {
+	type args struct {
+		collection []int
+		excludes   []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{"test1", args{[]int{3, 2, 1}, []int{4, 2}}, []int{3, 1}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Difference(tt.args.collection, tt.args.excludes); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Difference() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestDifferenceWith(t *testing.T) {
+	type args struct {
+		collection []int
+		excludes   []string
+		// comparator func(left int, right string) bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{"test1", args{[]int{3, 2, 1}, []string{"test4", "test2"}}, []int{3, 1}},
+		{"test1", args{[]int{3, 2, 1}, []string{"test1", "test2"}}, []int{3}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := DifferenceWith(tt.args.collection, tt.args.excludes, func(left int, right string) bool {
+				num, err := strconv.Atoi(right[4:])
+				if err != nil {
+					t.Errorf("DifferenceWith atoi  failed %v", tt.name)
+				}
+				if num == left {
+					return true
+				}
+				return false
+			}); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("DifferenceWith() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFindIndex(t *testing.T) {
+	type args struct {
+		array []string
+		// predicate func(item string) bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"test1", args{[]string{"test1", "test2", "test3"}}, -1},
+		{"test1", args{[]string{"test1", "test2", "test9"}}, 2},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FindIndex(tt.args.array, func(item string) bool {
+				return item == "test9"
+			}); got != tt.want {
+				t.Errorf("FindIndex() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestLastIndex(t *testing.T) {
+	type args struct {
+		array []string
+		// predicate func(item string) bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"test1", args{[]string{"test1", "test9", "test2", "test3", "test9"}}, 4},
+		{"test1", args{[]string{"test1", "test2", "test9"}}, 2},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := FindLastIndex(tt.args.array, func(item string) bool {
+				return item == "test9"
+			}); got != tt.want {
+				t.Errorf("FindIndex() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -152,3 +152,19 @@ func Fill[T Clonable[T]](collection []T, initial T) []T {
 
 	return result
 }
+
+// Flatten returns an array a single level deep.
+// Play: https://go.dev/play/p/rbp9ORaMpjw
+func Flatten[T any](collection [][]T) []T {
+	totalLen := 0
+	for i := range collection {
+		totalLen += len(collection[i])
+	}
+
+	result := make([]T, 0, totalLen)
+	for i := range collection {
+		result = append(result, collection[i]...)
+	}
+
+	return result
+}

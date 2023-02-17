@@ -35,3 +35,21 @@ package lo
 
 // 	return left, right
 // }
+
+// Intersect returns the intersection between two collections.
+func Intersect[T comparable](list1 []T, list2 []T) []T {
+	result := []T{}
+	seen := map[T]struct{}{}
+
+	for _, elem := range list1 {
+		seen[elem] = struct{}{}
+	}
+
+	for _, elem := range list2 {
+		if _, ok := seen[elem]; ok {
+			result = append(result, elem)
+		}
+	}
+
+	return result
+}

@@ -1,5 +1,9 @@
 package lo
 
+import (
+	"github.com/mudssky/leetcode-go/constraints"
+)
+
 // 返回一个拼接好的新数组
 func Concat[T any](collection []T, values ...T) []T {
 	result := make([]T, 0, len(collection)+len(values))
@@ -127,4 +131,60 @@ func Intersect2[T comparable](arrays ...[]T) []T {
 	}
 
 	return res
+}
+
+// 判断一个数据应该放入增序排序数组的哪个位置
+func SortedIndex[T constraints.Ordered](array []T, value T) int {
+	length := len(array)
+	if length == 0 {
+		return 0
+	}
+	for i := 0; i < length; i++ {
+		if value < array[i] {
+			return i
+		}
+	}
+	return length
+}
+
+// 判断一个数据应该放入增序排序数组的哪个位置,先用iteratee处理后比较
+func SortedIndexBy[T constraints.Ordered](array []T, value T, iteratee func(item T, index int)) int {
+	length := len(array)
+	if length == 0 {
+		return 0
+	}
+	for i := 0; i < length; i++ {
+		if value < array[i] {
+			return i
+		}
+	}
+	return length
+}
+
+// 创建一个数组，包含所有数组中的唯一值
+func Xor[T comparable](arrays ...[]T) []T {
+	// 创建一个 map，用于统计元素在几个数组中出现过
+	m := make(map[T]int)
+	for _, a := range arrays {
+		for _, v := range a {
+			m[v]++
+		}
+	}
+
+	res := []T{}
+	// 遍历 map，找出出现在所有数组中的元素
+	for k, v := range m {
+		if v < 2 {
+			res = append(res, k)
+		}
+	}
+
+	return res
+}
+
+// 反向遍历
+func ForEachRight[T any](collection []T, iteratee func(item T, index int)) {
+	for i := len(collection) - 1; i >= 0; i-- {
+		iteratee(collection[i], i)
+	}
 }

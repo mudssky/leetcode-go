@@ -1,5 +1,7 @@
 package lo
 
+import "math/rand"
+
 // Chunk returns an array of elements split into groups the length of size. If array can't be split evenly,
 // the final chunk will be the remaining elements.
 func Chunk[T any](collection []T, size int) [][]T {
@@ -52,7 +54,7 @@ func Map[T any, R any](collection []T, iteratee func(item T, index int) R) []R {
 
 // Filter iterates over elements of collection, returning an array of all elements predicate returns truthy for.
 func Filter[V any](collection []V, predicate func(item V, index int) bool) []V {
-	result := []V{}
+	result := make([]V, 0, len(collection))
 	for i, item := range collection {
 		if predicate(item, i) {
 			result = append(result, item)
@@ -167,4 +169,175 @@ func Flatten[T any](collection [][]T) []T {
 	}
 
 	return result
+}
+
+// Reverse reverses array so that the first element becomes the last, the second element becomes the second to last, and so on.
+// Play: https://go.dev/play/p/fhUMLvZ7vS6
+func Reverse[T any](collection []T) []T {
+	length := len(collection)
+	half := length / 2
+
+	for i := 0; i < half; i = i + 1 {
+		j := length - 1 - i
+		collection[i], collection[j] = collection[j], collection[i]
+	}
+
+	return collection
+}
+
+// Count counts the number of elements in the collection that compare equal to value.
+// Play: https://go.dev/play/p/Y3FlK54yveC
+func Count[T comparable](collection []T, value T) (count int) {
+	for _, item := range collection {
+		if item == value {
+			count++
+		}
+	}
+
+	return count
+}
+
+// CountBy counts the number of elements in the collection for which predicate is true.
+// Play: https://go.dev/play/p/ByQbNYQQi4X
+func CountBy[T any](collection []T, predicate func(item T) bool) (count int) {
+	for _, item := range collection {
+		if predicate(item) {
+			count++
+		}
+	}
+
+	return count
+}
+
+// CountValues counts the number of each element in the collection.
+// Play: https://go.dev/play/p/-p-PyLT4dfy
+func CountValues[T comparable](collection []T) map[T]int {
+	result := make(map[T]int)
+
+	for _, item := range collection {
+		result[item]++
+	}
+
+	return result
+}
+
+// CountValuesBy counts the number of each element return from mapper function.
+// Is equivalent to chaining lo.Map and lo.CountValues.
+// Play: https://go.dev/play/p/2U0dG1SnOmS
+func CountValuesBy[T any, U comparable](collection []T, mapper func(item T) U) map[U]int {
+	result := make(map[U]int)
+
+	for _, item := range collection {
+		result[mapper(item)]++
+	}
+
+	return result
+}
+
+// ForEach iterates over elements of collection and invokes iteratee for each element.
+// Play: https://go.dev/play/p/oofyiUPRf8t
+func ForEach[T any](collection []T, iteratee func(item T, index int)) {
+	for i, item := range collection {
+		iteratee(item, i)
+	}
+}
+
+// GroupBy returns an object composed of keys generated from the results of running each element of collection through iteratee.
+// Play: https://go.dev/play/p/XnQBd_v6brd
+func GroupBy[T any, U comparable](collection []T, iteratee func(item T) U) map[U][]T {
+	result := map[U][]T{}
+
+	for _, item := range collection {
+		key := iteratee(item)
+
+		result[key] = append(result[key], item)
+	}
+
+	return result
+}
+
+// KeyBy transforms a slice or an array of structs to a map based on a pivot callback.
+// Play: https://go.dev/play/p/mdaClUAT-zZ
+func KeyBy[K comparable, V any](collection []V, iteratee func(item V) K) map[K]V {
+	result := make(map[K]V, len(collection))
+
+	for _, v := range collection {
+		k := iteratee(v)
+		result[k] = v
+	}
+
+	return result
+}
+
+// PartitionBy returns an array of elements split into groups. The order of grouped values is
+// determined by the order they occur in collection. The grouping is generated from the results
+// of running each element of collection through iteratee.
+// Play: https://go.dev/play/p/NfQ_nGjkgXW
+func PartitionBy[T any, K comparable](collection []T, iteratee func(item T) K) [][]T {
+	result := [][]T{}
+	seen := map[K]int{}
+
+	for _, item := range collection {
+		key := iteratee(item)
+
+		resultIndex, ok := seen[key]
+		if !ok {
+			resultIndex = len(result)
+			seen[key] = resultIndex
+			result = append(result, []T{})
+		}
+
+		result[resultIndex] = append(result[resultIndex], item)
+	}
+
+	return result
+
+	// unordered:
+	// groups := GroupBy[T, K](collection, iteratee)
+	// return Values[K, []T](groups)
+}
+
+// Reduce reduces collection to a value which is the accumulated result of running each element in collection
+// through accumulator, where each successive invocation is supplied the return value of the previous.
+// Play: https://go.dev/play/p/R4UHXZNaaUG
+func Reduce[T any, R any](collection []T, accumulator func(agg R, item T, index int) R, initial R) R {
+	for i, item := range collection {
+		initial = accumulator(initial, item, i)
+	}
+
+	return initial
+}
+
+// ReduceRight helper is like Reduce except that it iterates over elements of collection from right to left.
+// Play: https://go.dev/play/p/Fq3W70l7wXF
+func ReduceRight[T any, R any](collection []T, accumulator func(agg R, item T, index int) R, initial R) R {
+	for i := len(collection) - 1; i >= 0; i-- {
+		initial = accumulator(initial, collection[i], i)
+	}
+
+	return initial
+}
+
+// Reject is the opposite of Filter, this method returns the elements of collection that predicate does not return truthy for.
+// Play: https://go.dev/play/p/YkLMODy1WEL
+func Reject[V any](collection []V, predicate func(item V, index int) bool) []V {
+	result := []V{}
+
+	for i, item := range collection {
+		if !predicate(item, i) {
+			result = append(result, item)
+		}
+	}
+
+	return result
+}
+
+// Shuffle returns an array of shuffled values. Uses the Fisher-Yates shuffle algorithm.
+// Play: https://go.dev/play/p/Qp73bnTDnc7
+func Shuffle[T any](collection []T) []T {
+	rand.Shuffle(len(collection), func(i, j int) {
+		collection[i], collection[j] = collection[j], collection[i]
+	})
+
+	return collection
 }

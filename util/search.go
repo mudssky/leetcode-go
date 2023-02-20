@@ -1,12 +1,16 @@
 package util
 
+import (
+	constraints "github.com/mudssky/leetcode-go/constraints"
+)
+
 // 这个文件放搜索算法相关
 
 // 二分查找
 // 传入升序排序的数字列表，返回找到的下标
 // 找不到的情况返回-1
 
-func BinarySearch[T Number](arr []T, target T) int {
+func BinarySearch[T constraints.Ordered](arr []T, target T) int {
 	low := 0
 	high := len(arr) - 1
 	// 已经排除了空数组的情况，此时high=-1，进入不了循环
@@ -47,7 +51,7 @@ func LinearSearch[T comparable](arr []T, target T) int {
 }
 
 // 二分查找性能的对照组
-func binarySearchCompare[T Number](arr []T, target T) int {
+func binarySearchCompare[T constraints.Ordered](arr []T, target T) int {
 	low := 0
 	high := len(arr) - 1
 	// 已经排除了空数组的情况，此时high=-1，进入不了循环

@@ -1,5 +1,11 @@
 package lo
 
+import (
+	"fmt"
+
+	"github.com/mudssky/leetcode-go/constraints"
+)
+
 // IndexOf returns the index at which the first occurrence of a value is found in an array or return -1
 // if the value cannot be found.
 func IndexOf[T comparable](collection []T, element T) int {
@@ -65,4 +71,20 @@ func FindLastIndexOf[T any](collection []T, predicate func(item T) bool) (T, int
 
 	var result T
 	return result, -1, false
+}
+
+// Nth returns the element at index `nth` of collection. If `nth` is negative, the nth element
+// from the end is returned. An error is returned when nth is out of slice bounds.
+func Nth[T any, N constraints.Integer](collection []T, nth N) (T, error) {
+	n := int(nth)
+	l := len(collection)
+	if n >= l || -n > l {
+		var t T
+		return t, fmt.Errorf("nth: %d out of slice bounds", n)
+	}
+
+	if n >= 0 {
+		return collection[n], nil
+	}
+	return collection[l+n], nil
 }

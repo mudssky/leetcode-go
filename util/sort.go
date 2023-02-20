@@ -1,7 +1,9 @@
 package util
 
+import "github.com/mudssky/leetcode-go/constraints"
+
 // 最基础的冒泡排序
-func BubbleSort[T Number](arr []T) {
+func BubbleSort[T constraints.Ordered](arr []T) {
 	length := len(arr)
 	for i := 0; i < length; i++ {
 		// 每次循环末尾都固定一个最大值，所以下次遍历的数组长度减1
@@ -14,7 +16,7 @@ func BubbleSort[T Number](arr []T) {
 }
 
 // 最基础的插入排序
-func InsertSort[T Number](arr []T) {
+func InsertSort[T constraints.Ordered](arr []T) {
 	length := len(arr)
 	for i := 1; i < length; i++ {
 

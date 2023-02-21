@@ -1,6 +1,10 @@
 package lo
 
-import "math/rand"
+import (
+	"math/rand"
+
+	"github.com/mudssky/leetcode-go/constraints"
+)
 
 // Chunk returns an array of elements split into groups the length of size. If array can't be split evenly,
 // the final chunk will be the remaining elements.
@@ -68,7 +72,6 @@ func Filter[V any](collection []V, predicate func(item V, index int) bool) []V {
 // The callback function should return two values:
 //   - the result of the mapping operation and
 //   - whether the result element should be included or not.
-//
 func FilterMap[T any, R any](collection []T, callback func(item T, index int) (R, bool)) []R {
 	result := []R{}
 	for i, item := range collection {
@@ -340,4 +343,200 @@ func Shuffle[T any](collection []T) []T {
 	})
 
 	return collection
+}
+
+// Times invokes the iteratee n times, returning an array of the results of each invocation.
+// The iteratee is invoked with index as argument.
+// Play: https://go.dev/play/p/vgQj3Glr6lT
+func Times[T any](count int, iteratee func(index int) T) []T {
+	result := make([]T, count)
+
+	for i := 0; i < count; i++ {
+		result[i] = iteratee(i)
+	}
+
+	return result
+}
+
+// Interleave round-robin alternating input slices and sequentially appending value at index into result
+// Play: https://go.dev/play/p/DDhlwrShbwe
+func Interleave[T any](collections ...[]T) []T {
+	if len(collections) == 0 {
+		return []T{}
+	}
+
+	maxSize := 0
+	totalSize := 0
+	for _, c := range collections {
+		size := len(c)
+		totalSize += size
+		if size > maxSize {
+			maxSize = size
+		}
+	}
+
+	if maxSize == 0 {
+		return []T{}
+	}
+
+	result := make([]T, totalSize)
+
+	resultIdx := 0
+	for i := 0; i < maxSize; i++ {
+		for j := range collections {
+			if len(collections[j])-1 < i {
+				continue
+			}
+
+			result[resultIdx] = collections[j][i]
+			resultIdx++
+		}
+	}
+
+	return result
+}
+
+// Repeat builds a slice with N copies of initial value.
+// Play: https://go.dev/play/p/g3uHXbmc3b6
+func Repeat[T Clonable[T]](count int, initial T) []T {
+	result := make([]T, 0, count)
+
+	for i := 0; i < count; i++ {
+		result = append(result, initial.Clone())
+	}
+
+	return result
+}
+
+// RepeatBy builds a slice with values returned by N calls of callback.
+// Play: https://go.dev/play/p/ozZLCtX_hNU
+func RepeatBy[T any](count int, predicate func(index int) T) []T {
+	result := make([]T, 0, count)
+
+	for i := 0; i < count; i++ {
+		result = append(result, predicate(i))
+	}
+
+	return result
+}
+
+// Associate returns a map containing key-value pairs provided by transform function applied to elements of the given slice.
+// If any of two pairs would have the same key the last one gets added to the map.
+// The order of keys in returned map is not specified and is not guaranteed to be the same from the original array.
+// Play: https://go.dev/play/p/WHa2CfMO3Lr
+func Associate[T any, K comparable, V any](collection []T, transform func(item T) (K, V)) map[K]V {
+	result := make(map[K]V, len(collection))
+
+	for _, t := range collection {
+		k, v := transform(t)
+		result[k] = v
+	}
+
+	return result
+}
+
+// SliceToMap returns a map containing key-value pairs provided by transform function applied to elements of the given slice.
+// If any of two pairs would have the same key the last one gets added to the map.
+// The order of keys in returned map is not specified and is not guaranteed to be the same from the original array.
+// Alias of Associate().
+// Play: https://go.dev/play/p/WHa2CfMO3Lr
+func SliceToMap[T any, K comparable, V any](collection []T, transform func(item T) (K, V)) map[K]V {
+	return Associate(collection, transform)
+}
+
+// Subset returns a copy of a slice from `offset` up to `length` elements. Like `slice[start:start+length]`, but does not panic on overflow.
+// Play: https://go.dev/play/p/tOQu1GhFcog
+func Subset[T any](collection []T, offset int, length uint) []T {
+	size := len(collection)
+
+	if offset < 0 {
+		offset = size + offset
+		if offset < 0 {
+			offset = 0
+		}
+	}
+
+	if offset > size {
+		return []T{}
+	}
+
+	if length > uint(size)-uint(offset) {
+		length = uint(size - offset)
+	}
+
+	return collection[offset : offset+int(length)]
+}
+
+// Slice returns a copy of a slice from `start` up to, but not including `end`. Like `slice[start:end]`, but does not panic on overflow.
+// Play: https://go.dev/play/p/8XWYhfMMA1h
+func Slice[T any](collection []T, start int, end int) []T {
+	size := len(collection)
+
+	if start >= end {
+		return []T{}
+	}
+
+	if start > size {
+		start = size
+	}
+	if start < 0 {
+		start = 0
+	}
+
+	if end > size {
+		end = size
+	}
+	if end < 0 {
+		end = 0
+	}
+
+	return collection[start:end]
+}
+
+// Replace returns a copy of the slice with the first n non-overlapping instances of old replaced by new.
+// Play: https://go.dev/play/p/XfPzmf9gql6
+func Replace[T comparable](collection []T, old T, new T, n int) []T {
+	result := make([]T, len(collection))
+	copy(result, collection)
+
+	for i := range result {
+		if result[i] == old && n != 0 {
+			result[i] = new
+			n--
+		}
+	}
+
+	return result
+}
+
+// ReplaceAll returns a copy of the slice with all non-overlapping instances of old replaced by new.
+// Play: https://go.dev/play/p/a9xZFUHfYcV
+func ReplaceAll[T comparable](collection []T, old T, new T) []T {
+	return Replace(collection, old, new, -1)
+}
+
+// IsSorted checks if a slice is sorted.
+// Play: https://go.dev/play/p/mc3qR-t4mcx
+func IsSorted[T constraints.Ordered](collection []T) bool {
+	for i := 1; i < len(collection); i++ {
+		if collection[i-1] > collection[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsSortedByKey checks if a slice is sorted by iteratee.
+// Play: https://go.dev/play/p/wiG6XyBBu49
+func IsSortedByKey[T any, K constraints.Ordered](collection []T, iteratee func(item T) K) bool {
+	size := len(collection)
+
+	for i := 0; i < size-1; i++ {
+		if iteratee(collection[i]) > iteratee(collection[i+1]) {
+			return false
+		}
+	}
+
+	return true
 }

@@ -185,3 +185,25 @@ func SomeBy[T any](collection []T, predicate func(item T) bool) bool {
 
 	return false
 }
+
+// None returns true if no element of a subset are contained into a collection or if the subset is empty.
+func None[T comparable](collection []T, subset []T) bool {
+	for _, elem := range subset {
+		if Contains(collection, elem) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// NoneBy returns true if the predicate returns true for none of the elements in the collection or if the collection is empty.
+func NoneBy[T any](collection []T, predicate func(item T) bool) bool {
+	for _, v := range collection {
+		if predicate(v) {
+			return false
+		}
+	}
+
+	return true
+}

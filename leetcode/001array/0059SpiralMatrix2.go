@@ -9,19 +9,40 @@ func generateMatrix(n int) [][]int {
 	endY := endX
 	startX := 0
 	startY := 0
-	count := 0
-	// for startX < endX && startY < endY {
-	for i := startX; i < endX; i++ {
-		res[0][i] = count
-		count++
+	count := 1
+	loop := n / 2
+	for loop > 0 {
+		for i := startX; i < endX; i++ {
+			res[startX][i] = count
+			count++
+		}
+		// fmt.Println("1 ", res)
+		for i := startY; i < endY; i++ {
+			res[i][endX] = count
+			count++
+		}
+		// fmt.Println("2 ", res)
+		for i := endX; i > startX; i-- {
+			res[endY][i] = count
+			count++
+		}
+		// fmt.Println("3 ", res)
+		for i := endY; i > startY; i-- {
+			res[i][startX] = count
+			count++
+		}
+		startX++
+		startY++
+		endX--
+		endY--
+		loop--
 	}
-	for i := startY; i < endY; i++ {
-		res[i][endX] = count
-		count++
+	mid := n / 2
+	if n%2 != 0 {
+		res[mid][mid] = n * n
 	}
-
 	// for i:=endX;>=0
 	// }
-	// fmt.Println()
+	// fmt.Println("4 ", res)
 	return res
 }

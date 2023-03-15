@@ -12,21 +12,27 @@ func Constructor() MyStack {
 	return *s
 }
 
-// func (this *MyStack) Push(x int)  {
+func (this *MyStack) Push(x int) {
+	this.queue.Push(x)
+}
 
-// }
+func (this *MyStack) Pop() int {
+	// return this.queue.Pop()
+	size := this.queue.Size()
+	for size > 1 {
+		size--
+		this.queue.Push(this.queue.Pop())
+	}
+	return this.queue.Pop()
+}
 
-// func (this *MyStack) Pop() int {
+func (this *MyStack) Top() int {
+	return this.queue.Back()
+}
 
-// }
-
-// func (this *MyStack) Top() int {
-
-// }
-
-// func (this *MyStack) Empty() bool {
-
-// }
+func (this *MyStack) Empty() bool {
+	return this.queue.Empty()
+}
 
 /**
  * Your MyStack object will be instantiated and called as such:

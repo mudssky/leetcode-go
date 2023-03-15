@@ -6,6 +6,7 @@ type Queuer[T comparable] interface {
 	Peek() T
 	Empty() bool
 	Size() int
+	Back() T
 }
 
 type Queue[T comparable] struct {
@@ -46,4 +47,12 @@ func (q *Queue[T]) Peek() T {
 
 func (q *Queue[T]) Size() int {
 	return q.list.length
+}
+
+func (q *Queue[T]) Back() T {
+	var res T
+	if !q.Empty() {
+		return q.list.dummy.Prev.Val
+	}
+	return res
 }

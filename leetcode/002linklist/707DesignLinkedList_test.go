@@ -74,4 +74,10 @@ func TestMyLinkedList(t *testing.T) {
 	linkedList4.AddAtTail(7)
 	linkedList4.AddAtIndex(1, 7)
 	linkedList4.AddAtTail(6)
+	linkedList4.DeleteAtIndex(0)
+	linkedList4.DeleteAtIndex(0)
+	linkedList4.DeleteAtIndex(0)
+	linkedList4.DeleteAtIndex(0)
+	linkedList4.DeleteAtIndex(0)
+	linkedList4.Get(0)
 }

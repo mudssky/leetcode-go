@@ -30,6 +30,8 @@
     "GOPROXY",
     "goserver",
     "goversion",
+    "heapify",
+    "inorder",
     "leetcode",
     "loglevel",
     "logn",

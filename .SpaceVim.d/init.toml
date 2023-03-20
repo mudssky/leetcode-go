@@ -1,0 +1,7 @@
+
+[options]
+
+enable_filetree_gitstatus = true
+
+[[layers]]
+name = "lang#go"

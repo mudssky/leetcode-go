@@ -5,3 +5,27 @@ enable_filetree_gitstatus = true
 
 [[layers]]
 name = "lang#go"
+
+# 使用coc补全
+[[layers]]
+name = 'autocomplete'
+auto_completion_return_key_behavior = "complete"
+auto_completion_tab_key_behavior = "smart"
+auto_completion_delay = 200
+auto_completion_complete_with_key_sequence = "nil"
+auto_completion_complete_with_key_sequence_delay = 0.1
+
+
+[[layers]]
+name = "git"
+
+[[layers]]
+name = "lsp"
+filetypes = [
+	"vue",
+	"typescript",
+	"typescriptreact",
+	"javascriptreact",
+	"javascript",
+	"go",
+]

@@ -70,3 +70,25 @@ func Tree2ints(tn *TreeNode) []int {
 	}
 	return res[:i]
 }
+
+// 从二叉树中找到对应值的节点，
+// 二叉树最好每个值是不同的，因为只返回找到的第一个值
+func (t *TreeNode) FindNode(val int) *TreeNode {
+	q := []*TreeNode{}
+	q = append(q, t)
+	for len(q) > 0 {
+		head := q[0]
+		q = q[1:]
+		if head.Val == val {
+			return head
+		}
+		if head.Left != nil {
+			q = append(q, head.Left)
+		}
+		if head.Right != nil {
+			q = append(q, head.Right)
+		}
+
+	}
+	return nil
+}

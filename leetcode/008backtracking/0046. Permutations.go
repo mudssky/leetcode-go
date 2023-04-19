@@ -5,10 +5,10 @@ package leetcode
 func permute(nums []int) [][]int {
 	path := []int{}
 	res := [][]int{}
-	// 全局使用一个used数组
+	// 全局使用一个used数组，记录path中使用过的坐标
 	used := make(map[int]bool, len(nums))
-	var dfs func(startIndex int)
-	dfs = func(startIndex int) {
+	var dfs func()
+	dfs = func() {
 		if len(path) >= len(nums) {
 			tmp := make([]int, len(path))
 			copy(tmp, path)
@@ -16,18 +16,18 @@ func permute(nums []int) [][]int {
 			return
 		}
 		for i := 0; i < len(nums); i++ {
-			// 本层已经使用过的元素，跳过
+			// path中已经使用过的元素，跳过，因为一个排列里一个元素只能使用一次。
 			if used[i] {
 				continue
 			}
 			used[i] = true
 			path = append(path, nums[i])
 
-			dfs(i + 1)
+			dfs()
 			path = path[:len(path)-1]
 			used[i] = false
 		}
 	}
-	dfs(0)
+	dfs()
 	return res
 }

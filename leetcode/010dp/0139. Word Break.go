@@ -28,7 +28,7 @@ func wordBreak(s string, wordDict []string) bool {
 	dp[0] = true
 	// 本题求得是排列数
 	// 外层遍历背包，内层遍历物品
-	for i := 1; i < len(s); i++ {
+	for i := 1; i <= len(s); i++ {
 		// 如果确定dp[j] 是true，且 [j, i] 这个区间的子串出现在字典里，那么dp[i]一定是true。（j < i ）。
 		for j := 0; j < i; j++ {
 			if dp[j] && wordDictSet[s[j:i]] {

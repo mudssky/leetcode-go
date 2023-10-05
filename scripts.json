@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "test:all": "go test ./...",
+    "test": "go test  ./leetcode/..."
+  }
+}
